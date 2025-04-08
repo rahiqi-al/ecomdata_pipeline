@@ -82,6 +82,22 @@ services:
       - nifi-conf:/opt/nifi/nifi-current/conf
       - nifi_flowfile:/opt/nifi/nifi-current/flowfile_repository
       - nifi_content:/opt/nifi/nifi-current/content_repository
+      - ./staging:/staging  # Mount host staging/ to /staging in NiFi
+    restart: unless-stopped
+
+
+  minio:
+    image: minio/minio:latest
+    container_name: minio
+    ports:
+      - "9000:9000"  # API
+      - "9001:9001"  # Console
+    volumes:
+      - minio_data:/data
+    environment:
+      - MINIO_ROOT_USER=ali
+      - MINIO_ROOT_PASSWORD=aliali123
+    command: server /data --console-address ":9001"
     restart: unless-stopped
 
 volumes:
@@ -90,4 +106,6 @@ volumes:
   nifi_flowfile:
   nifi_content:
   zookeeper_data:  
-  kafka_data:      
+  kafka_data:  
+  minio_data:
+    
